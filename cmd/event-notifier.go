@@ -598,16 +598,10 @@ func loadAllQueueTargets() (map[string]*logrus.Logger, error) {
 			continue
 		}
 
-		// Using accountID we can now initialize a new ElasticSearch logrus instance.
+		// Using accountID we can now initialize a new HTTP logrus instance.
 		httpLog, err := newHTTPNotify(accountID)
 		if err != nil {
-			// Encapsulate network error to be more informative.
-			if _, ok := err.(net.Error); ok {
-				return nil, &net.OpError{
-					Op: "Connecting to " + queueARN, Net: "tcp",
-					Err: err,
-				}
-			}
+
 			return nil, err
 		}
 		queueTargets[queueARN] = httpLog

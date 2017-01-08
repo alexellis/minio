@@ -17,12 +17,9 @@
 package cmd
 
 import (
-	"bytes"
 	"io/ioutil"
 
 	"fmt"
-
-	"net/http"
 
 	"github.com/Sirupsen/logrus"
 )
@@ -43,7 +40,6 @@ func newHTTPNotify(accountID string) (*logrus.Logger, error) {
 	// Set default JSON formatter.
 	notifyLog.Formatter = new(logrus.JSONFormatter)
 
-	notifyLog.Println("{\"newHTTP\":1}")
 	// Success
 	return notifyLog, nil
 }
@@ -59,10 +55,10 @@ func Fire(entry *logrus.Entry) error {
 	fmt.Println("We got a HTTP event fired.")
 	fmt.Println(entryStr)
 
-	buf := bytes.NewBufferString(entryStr)
-	response, err := http.Post("http://requestb.in/1i9al7m1", "application/json", buf)
+	// buf := bytes.NewBufferString(entryStr)
+	// response, err := http.Post("http://requestb.in/1i9al7m1", "application/json", buf)
 
-	fmt.Println(response.Status, err)
+	// fmt.Println(response.Status, err)
 
 	return nil
 }
