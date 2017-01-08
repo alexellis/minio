@@ -585,6 +585,34 @@ func loadAllQueueTargets() (map[string]*logrus.Logger, error) {
 		}
 		queueTargets[queueARN] = redisLog
 	}
+
+	// Load HTTP targets, initialize their respective loggers.
+	for accountID, httpN := range serverConfig.GetHTTP() {
+		if !httpN.Enable {
+			continue
+		}
+		// Construct the queue ARN for HTTP.
+		queueARN := minioSqs + serverConfig.GetRegion() + ":" + accountID + ":" + queueTypeHTTP
+		_, ok := queueTargets[queueARN]
+		if ok {
+			continue
+		}
+
+		// Using accountID we can now initialize a new ElasticSearch logrus instance.
+		httpLog, err := newHTTPNotify(accountID)
+		if err != nil {
+			// Encapsulate network error to be more informative.
+			if _, ok := err.(net.Error); ok {
+				return nil, &net.OpError{
+					Op: "Connecting to " + queueARN, Net: "tcp",
+					Err: err,
+				}
+			}
+			return nil, err
+		}
+		queueTargets[queueARN] = httpLog
+	}
+
 	// Load elastic targets, initialize their respective loggers.
 	for accountID, elasticN := range serverConfig.GetElasticSearch() {
 		if !elasticN.Enable {
@@ -610,6 +638,7 @@ func loadAllQueueTargets() (map[string]*logrus.Logger, error) {
 		}
 		queueTargets[queueARN] = elasticLog
 	}
+
 	// Load PostgreSQL targets, initialize their respective loggers.
 	for accountID, pgN := range serverConfig.GetPostgreSQL() {
 		if !pgN.Enable {

@@ -208,6 +208,21 @@ func (s serverConfigV11) GetRedis() map[string]redisNotify {
 	return s.Notify.Redis
 }
 
+func (s serverConfigV11) GetHTTP() map[string]httpNotify {
+	serverConfigMu.RLock()
+	defer serverConfigMu.RUnlock()
+
+	return s.Notify.HTTP
+}
+
+// GetRedisNotify get current Redis logger.
+func (s serverConfigV11) GetHTTPNotifyByID(accountID string) httpNotify {
+	serverConfigMu.RLock()
+	defer serverConfigMu.RUnlock()
+
+	return s.Notify.HTTP[accountID]
+}
+
 // GetRedisNotify get current Redis logger.
 func (s serverConfigV11) GetRedisNotifyByID(accountID string) redisNotify {
 	serverConfigMu.RLock()

@@ -40,6 +40,8 @@ const (
 	queueTypePostgreSQL = "postgresql"
 	// Static string indicating queue type 'kafka'.
 	queueTypeKafka = "kafka"
+
+	queueTypeHTTP = "http"
 )
 
 // Topic type.
@@ -61,6 +63,7 @@ type notifier struct {
 	Redis         map[string]redisNotify         `json:"redis"`
 	PostgreSQL    map[string]postgreSQLNotify    `json:"postgresql"`
 	Kafka         map[string]kafkaNotify         `json:"kafka"`
+	HTTP          map[string]httpNotify          `json:"http"`
 	// Add new notification queues.
 }
 
@@ -99,6 +102,18 @@ func isNATSQueue(sqsArn arnSQS) bool {
 		return false
 	}
 	defer natsC.Close()
+	return true
+}
+
+// Returns true if queueArn is for an HTTP queue
+func isHTTPQueue(sqsArn arnSQS) bool {
+	if sqsArn.Type != queueTypeHTTP {
+		return false
+	}
+	rNotify := serverConfig.GetHTTPNotifyByID(sqsArn.AccountID)
+	if !rNotify.Enable {
+		return false
+	}
 	return true
 }
 

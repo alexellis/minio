@@ -131,7 +131,10 @@ func isValidQueueID(queueARN string) bool {
 	// Unmarshals QueueARN into structured object.
 	sqsARN := unmarshalSqsARN(queueARN)
 	// Is Queue identifier valid?.
-	if isAMQPQueue(sqsARN) { // AMQP eueue.
+	if isHTTPQueue(sqsARN) { // AMQP eueue.
+		httpN := serverConfig.GetHTTPNotifyByID(sqsARN.AccountID)
+		return httpN.Enable && httpN.Addr != ""
+	} else if isAMQPQueue(sqsARN) { // AMQP eueue.
 		amqpN := serverConfig.GetAMQPNotifyByID(sqsARN.AccountID)
 		return amqpN.Enable && amqpN.URL != ""
 	} else if isNATSQueue(sqsARN) {
@@ -260,6 +263,8 @@ func unmarshalSqsARN(queueARN string) (mSqs arnSQS) {
 		mSqs.Type = queueTypePostgreSQL
 	case strings.HasSuffix(sqsType, queueTypeKafka):
 		mSqs.Type = queueTypeKafka
+	case strings.HasSuffix(sqsType, queueTypeHTTP):
+		mSqs.Type = queueTypeHTTP
 	} // Add more queues here.
 	mSqs.AccountID = strings.TrimSuffix(sqsType, ":"+mSqs.Type)
 	return mSqs
