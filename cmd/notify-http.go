@@ -40,12 +40,14 @@ func newHTTPNotify(accountID string) (*logrus.Logger, error) {
 	// Set default JSON formatter.
 	notifyLog.Formatter = new(logrus.JSONFormatter)
 
+	notifyLog.Hooks.Add(rNotify)
+
 	// Success
 	return notifyLog, nil
 }
 
 // Fire is called when an event should be sent to the message broker.
-func Fire(entry *logrus.Entry) error {
+func (n httpNotify) Fire(entry *logrus.Entry) error {
 
 	// Fetch event type upon reflecting on its original type.
 	entryStr, ok := entry.Data["EventType"].(string)
@@ -64,7 +66,7 @@ func Fire(entry *logrus.Entry) error {
 }
 
 // Levels are Required for logrus hook implementation
-func Levels() []logrus.Level {
+func (httpNotify) Levels() []logrus.Level {
 	return []logrus.Level{
 		logrus.InfoLevel,
 	}
