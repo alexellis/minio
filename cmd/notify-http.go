@@ -17,9 +17,12 @@
 package cmd
 
 import (
+	"bytes"
 	"io/ioutil"
 
 	"fmt"
+
+	"net/http"
 
 	"github.com/Sirupsen/logrus"
 )
@@ -55,6 +58,11 @@ func Fire(entry *logrus.Entry) error {
 	}
 	fmt.Println("We got a HTTP event fired.")
 	fmt.Println(entryStr)
+
+	buf := bytes.NewBufferString(entryStr)
+	response, err := http.Post("http://requestb.in/1i9al7m1", "application/json", buf)
+
+	fmt.Println(response.Status, err)
 
 	return nil
 }
