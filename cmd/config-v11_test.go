@@ -67,6 +67,13 @@ func TestServerConfig(t *testing.T) {
 		t.Errorf("Expecting Kafka config %#v found %#v", kafkaNotify{}, savedNotifyCfg4)
 	}
 
+	// Set new HTTP notification id.
+	serverConfig.SetHTTPNotifyByID("2", httpNotify{})
+	savedNotifyCfg5 := serverConfig.GetHTTPNotifyByID("2")
+	if !reflect.DeepEqual(savedNotifyCfg5, httpNotify{}) {
+		t.Errorf("Expecting HTTP config %#v found %#v", httpNotify{}, savedNotifyCfg3)
+	}
+
 	// Set new console logger.
 	serverConfig.SetConsoleLogger(consoleLogger{
 		Enable: true,

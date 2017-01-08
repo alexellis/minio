@@ -71,6 +71,8 @@ func initConfig() (bool, error) {
 		srvCfg.Notify.PostgreSQL["1"] = postgreSQLNotify{}
 		srvCfg.Notify.Kafka = make(map[string]kafkaNotify)
 		srvCfg.Notify.Kafka["1"] = kafkaNotify{}
+		srvCfg.Notify.HTTP = make(map[string]httpNotify)
+		srvCfg.Notify.HTTP["1"] = httpNotify{}
 
 		// Create config path.
 		err := createConfigPath()
@@ -215,7 +217,7 @@ func (s serverConfigV11) GetHTTP() map[string]httpNotify {
 	return s.Notify.HTTP
 }
 
-// GetRedisNotify get current HTTP logger.
+// GetHTTPNotifyByID get current HTTP logger.
 func (s serverConfigV11) GetHTTPNotifyByID(accountID string) httpNotify {
 	serverConfigMu.RLock()
 	defer serverConfigMu.RUnlock()
