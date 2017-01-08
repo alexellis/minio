@@ -215,12 +215,19 @@ func (s serverConfigV11) GetHTTP() map[string]httpNotify {
 	return s.Notify.HTTP
 }
 
-// GetRedisNotify get current Redis logger.
+// GetRedisNotify get current HTTP logger.
 func (s serverConfigV11) GetHTTPNotifyByID(accountID string) httpNotify {
 	serverConfigMu.RLock()
 	defer serverConfigMu.RUnlock()
 
 	return s.Notify.HTTP[accountID]
+}
+
+func (s *serverConfigV11) SetHTTPNotifyByID(accountID string, pgn httpNotify) {
+	serverConfigMu.Lock()
+	defer serverConfigMu.Unlock()
+
+	s.Notify.HTTP[accountID] = pgn
 }
 
 // GetRedisNotify get current Redis logger.
