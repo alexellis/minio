@@ -21,6 +21,8 @@ import (
 	"io/ioutil"
 	"net"
 	"net/http"
+	"net/url"
+	"strconv"
 	"time"
 
 	"fmt"
@@ -40,12 +42,27 @@ type httpConn struct {
 	Endpoint   string
 }
 
+type httpPostBody struct {
+	Records   interface{}
+	Key       string
+	EventType string
+}
+
 func newHTTPNotify(accountID string) (*logrus.Logger, error) {
 	rNotify := serverConfig.GetHTTPNotifyByID(accountID)
 	fmt.Println(rNotify)
 
 	connection := httpConn{
 		Endpoint: rNotify.Endpoint,
+	}
+
+	u, err := url.ParseRequestURI(rNotify.Endpoint)
+	if err != nil {
+		return nil, err
+	}
+	_, err = net.LookupHost(u.Host)
+	if err != nil {
+		return nil, err
 	}
 
 	// Configure aggressive timeouts for client posts.
@@ -81,12 +98,11 @@ func (n httpConn) Fire(entry *logrus.Entry) error {
 	if !ok {
 		return nil
 	}
-	fmt.Println("We got a HTTP event fired.")
-	fmt.Println(entryStr)
 
 	httpPostBody1 := httpPostBody{
-		Records: entry.Data["Records"],
-		Key:     entry.Data["Key"].(string),
+		Records:   entry.Data["Records"],
+		Key:       entry.Data["Key"].(string),
+		EventType: entryStr,
 	}
 
 	itemsStr, err := json.Marshal(httpPostBody1)
@@ -94,16 +110,19 @@ func (n httpConn) Fire(entry *logrus.Entry) error {
 		entry.Warn("Cannot convert request body to JSON.")
 	}
 	buf := bytes.NewBuffer(itemsStr)
-	response, err := n.HTTPClient.Post(n.Endpoint, "application/json", buf)
 
-	fmt.Println(response.Status, err)
+	// Enhancement: consider using "Request" so we can set the User-agent
+	req, postErr := n.HTTPClient.Post(n.Endpoint, "application/json", buf)
+	if postErr != nil {
+		entry.Warn(postErr)
+	}
+	if req.StatusCode != http.StatusOK &&
+		req.StatusCode != http.StatusAccepted &&
+		req.StatusCode != http.StatusContinue {
+		entry.Warn("Got status code: ", strconv.Itoa(req.StatusCode))
+	}
 
 	return nil
-}
-
-type httpPostBody struct {
-	Records interface{}
-	Key     string
 }
 
 // Levels are Required for logrus hook implementation
