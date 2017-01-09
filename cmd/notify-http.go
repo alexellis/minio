@@ -18,6 +18,7 @@ package cmd
 
 import (
 	"bytes"
+	"errors"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -107,8 +108,9 @@ func (n httpConn) Fire(entry *logrus.Entry) error {
 
 	itemsStr, err := json.Marshal(httpPostBody1)
 	if err != nil {
-		entry.Warn("Cannot convert request body to JSON.")
+		return err
 	}
+
 	buf := bytes.NewBuffer(itemsStr)
 
 	// Enhancement: consider using "Request" so we can set the User-agent
@@ -119,7 +121,8 @@ func (n httpConn) Fire(entry *logrus.Entry) error {
 	if req.StatusCode != http.StatusOK &&
 		req.StatusCode != http.StatusAccepted &&
 		req.StatusCode != http.StatusContinue {
-		entry.Warn("Got status code: ", strconv.Itoa(req.StatusCode))
+
+		return errors.New("Got status code: " + strconv.Itoa(req.StatusCode))
 	}
 
 	return nil
