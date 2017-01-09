@@ -586,25 +586,25 @@ func loadAllQueueTargets() (map[string]*logrus.Logger, error) {
 		queueTargets[queueARN] = redisLog
 	}
 
-	// Load HTTP targets, initialize their respective loggers.
-	for accountID, httpN := range serverConfig.GetHTTP() {
-		if !httpN.Enable {
+	// Load Webhook targets, initialize their respective loggers.
+	for accountID, webhookN := range serverConfig.GetHTTP() {
+		if !webhookN.Enable {
 			continue
 		}
-		// Construct the queue ARN for HTTP.
-		queueARN := minioSqs + serverConfig.GetRegion() + ":" + accountID + ":" + queueTypeHTTP
+		// Construct the queue ARN for Webhook.
+		queueARN := minioSqs + serverConfig.GetRegion() + ":" + accountID + ":" + queueTypeWebhook
 		_, ok := queueTargets[queueARN]
 		if ok {
 			continue
 		}
 
-		// Using accountID we can now initialize a new HTTP logrus instance.
-		httpLog, err := newHTTPNotify(accountID)
+		// Using accountID we can now initialize a new Webhook logrus instance.
+		webhookLog, err := newHTTPNotify(accountID)
 		if err != nil {
 
 			return nil, err
 		}
-		queueTargets[queueARN] = httpLog
+		queueTargets[queueARN] = webhookLog
 	}
 
 	// Load elastic targets, initialize their respective loggers.

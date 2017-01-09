@@ -231,7 +231,7 @@ func TestQueueARN(t *testing.T) {
 
 		// Valid redis queue arn.
 		{
-			queueARN: "arn:minio:sqs:us-east-1:1:http",
+			queueARN: "arn:minio:sqs:us-east-1:1:webhook",
 			errCode:  ErrNone,
 		},
 		// Valid redis queue arn.
@@ -312,10 +312,10 @@ func TestUnmarshalSQSARN(t *testing.T) {
 		queueARN string
 		Type     string
 	}{
-		// Valid HTTP queue arn.
+		// Valid webhook queue arn.
 		{
-			queueARN: "arn:minio:sqs:us-east-1:1:http",
-			Type:     "http",
+			queueARN: "arn:minio:sqs:us-east-1:1:webhook",
+			Type:     "webhook",
 		},
 		// Valid redis queue arn.
 		{

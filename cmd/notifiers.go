@@ -40,8 +40,8 @@ const (
 	queueTypePostgreSQL = "postgresql"
 	// Static string indicating queue type 'kafka'.
 	queueTypeKafka = "kafka"
-
-	queueTypeHTTP = "http"
+	// Static string for Webhooks
+	queueTypeWebhook = "webhook"
 )
 
 // Topic type.
@@ -63,7 +63,7 @@ type notifier struct {
 	Redis         map[string]redisNotify         `json:"redis"`
 	PostgreSQL    map[string]postgreSQLNotify    `json:"postgresql"`
 	Kafka         map[string]kafkaNotify         `json:"kafka"`
-	HTTP          map[string]httpNotify          `json:"http"`
+	Webhook       map[string]webhookNotify       `json:"webhook"`
 	// Add new notification queues.
 }
 
@@ -106,8 +106,8 @@ func isNATSQueue(sqsArn arnSQS) bool {
 }
 
 // Returns true if queueArn is for an HTTP queue
-func isHTTPQueue(sqsArn arnSQS) bool {
-	if sqsArn.Type != queueTypeHTTP {
+func isWebhookQueue(sqsArn arnSQS) bool {
+	if sqsArn.Type != queueTypeWebhook {
 		return false
 	}
 	rNotify := serverConfig.GetHTTPNotifyByID(sqsArn.AccountID)

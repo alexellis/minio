@@ -68,10 +68,10 @@ func TestServerConfig(t *testing.T) {
 	}
 
 	// Set new HTTP notification id.
-	serverConfig.SetHTTPNotifyByID("2", httpNotify{})
+	serverConfig.SetHTTPNotifyByID("2", webhookNotify{})
 	savedNotifyCfg5 := serverConfig.GetHTTPNotifyByID("2")
-	if !reflect.DeepEqual(savedNotifyCfg5, httpNotify{}) {
-		t.Errorf("Expecting HTTP config %#v found %#v", httpNotify{}, savedNotifyCfg3)
+	if !reflect.DeepEqual(savedNotifyCfg5, webhookNotify{}) {
+		t.Errorf("Expecting Webhook config %#v found %#v", webhookNotify{}, savedNotifyCfg3)
 	}
 
 	// Set new console logger.

@@ -33,7 +33,7 @@ import (
 	"github.com/Sirupsen/logrus"
 )
 
-type httpNotify struct {
+type webhookNotify struct {
 	Enable   bool   `json:"enable"`
 	Endpoint string `json:"endpoint"`
 }
