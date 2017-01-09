@@ -229,7 +229,7 @@ func TestQueueARN(t *testing.T) {
 		errCode  APIErrorCode
 	}{
 
-		// Valid redis queue arn.
+		// Valid webhook queue arn.
 		{
 			queueARN: "arn:minio:sqs:us-east-1:1:webhook",
 			errCode:  ErrNone,

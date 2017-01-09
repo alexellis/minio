@@ -152,7 +152,7 @@ func isValidQueueID(queueARN string) bool {
 		kafkaN := serverConfig.GetKafkaNotifyByID(sqsARN.AccountID)
 		return (kafkaN.Enable && len(kafkaN.Brokers) > 0 &&
 			kafkaN.Topic != "")
-	} else if isWebhookQueue(sqsARN) { // HTTP endpoint.
+	} else if isWebhookQueue(sqsARN) {
 		webhookN := serverConfig.GetWebhookNotifyByID(sqsARN.AccountID)
 		return webhookN.Enable && webhookN.Endpoint != ""
 	}
@@ -245,6 +245,7 @@ func validateNotificationConfig(nConfig notificationConfig) APIErrorCode {
 // - redis
 // - postgresql
 // - kafka
+// - webhook
 func unmarshalSqsARN(queueARN string) (mSqs arnSQS) {
 	mSqs = arnSQS{}
 	if !strings.HasPrefix(queueARN, minioSqs+serverConfig.GetRegion()+":") {

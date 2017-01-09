@@ -105,7 +105,7 @@ func isNATSQueue(sqsArn arnSQS) bool {
 	return true
 }
 
-// Returns true if queueArn is for an HTTP queue
+// Returns true if queueArn is for an Webhook queue
 func isWebhookQueue(sqsArn arnSQS) bool {
 	if sqsArn.Type != queueTypeWebhook {
 		return false
