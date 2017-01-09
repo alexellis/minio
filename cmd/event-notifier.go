@@ -587,7 +587,7 @@ func loadAllQueueTargets() (map[string]*logrus.Logger, error) {
 	}
 
 	// Load Webhook targets, initialize their respective loggers.
-	for accountID, webhookN := range serverConfig.GetHTTP() {
+	for accountID, webhookN := range serverConfig.GetWebhook() {
 		if !webhookN.Enable {
 			continue
 		}
@@ -599,7 +599,7 @@ func loadAllQueueTargets() (map[string]*logrus.Logger, error) {
 		}
 
 		// Using accountID we can now initialize a new Webhook logrus instance.
-		webhookLog, err := newHTTPNotify(accountID)
+		webhookLog, err := newWebhookNotify(accountID)
 		if err != nil {
 
 			return nil, err

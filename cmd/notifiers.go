@@ -110,7 +110,7 @@ func isWebhookQueue(sqsArn arnSQS) bool {
 	if sqsArn.Type != queueTypeWebhook {
 		return false
 	}
-	rNotify := serverConfig.GetHTTPNotifyByID(sqsArn.AccountID)
+	rNotify := serverConfig.GetWebhookNotifyByID(sqsArn.AccountID)
 	if !rNotify.Enable {
 		return false
 	}

@@ -131,10 +131,8 @@ func isValidQueueID(queueARN string) bool {
 	// Unmarshals QueueARN into structured object.
 	sqsARN := unmarshalSqsARN(queueARN)
 	// Is Queue identifier valid?.
-	if isWebhookQueue(sqsARN) { // HTTP endpoint.
-		webhookN := serverConfig.GetHTTPNotifyByID(sqsARN.AccountID)
-		return webhookN.Enable && webhookN.Endpoint != ""
-	} else if isAMQPQueue(sqsARN) { // AMQP eueue.
+
+	if isAMQPQueue(sqsARN) { // AMQP eueue.
 		amqpN := serverConfig.GetAMQPNotifyByID(sqsARN.AccountID)
 		return amqpN.Enable && amqpN.URL != ""
 	} else if isNATSQueue(sqsARN) {
@@ -154,6 +152,9 @@ func isValidQueueID(queueARN string) bool {
 		kafkaN := serverConfig.GetKafkaNotifyByID(sqsARN.AccountID)
 		return (kafkaN.Enable && len(kafkaN.Brokers) > 0 &&
 			kafkaN.Topic != "")
+	} else if isWebhookQueue(sqsARN) { // HTTP endpoint.
+		webhookN := serverConfig.GetWebhookNotifyByID(sqsARN.AccountID)
+		return webhookN.Enable && webhookN.Endpoint != ""
 	}
 	return false
 }

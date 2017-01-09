@@ -210,22 +210,22 @@ func (s serverConfigV11) GetRedis() map[string]redisNotify {
 	return s.Notify.Redis
 }
 
-func (s serverConfigV11) GetHTTP() map[string]webhookNotify {
+func (s serverConfigV11) GetWebhook() map[string]webhookNotify {
 	serverConfigMu.RLock()
 	defer serverConfigMu.RUnlock()
 
 	return s.Notify.Webhook
 }
 
-// GetHTTPNotifyByID get current HTTP logger.
-func (s serverConfigV11) GetHTTPNotifyByID(accountID string) webhookNotify {
+// GetWebhookNotifyByID get current Webhook logger.
+func (s serverConfigV11) GetWebhookNotifyByID(accountID string) webhookNotify {
 	serverConfigMu.RLock()
 	defer serverConfigMu.RUnlock()
 
 	return s.Notify.Webhook[accountID]
 }
 
-func (s *serverConfigV11) SetHTTPNotifyByID(accountID string, pgn webhookNotify) {
+func (s *serverConfigV11) SetWebhookNotifyByID(accountID string, pgn webhookNotify) {
 	serverConfigMu.Lock()
 	defer serverConfigMu.Unlock()
 

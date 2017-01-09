@@ -49,8 +49,8 @@ type httpPostBody struct {
 	EventType string
 }
 
-func newHTTPNotify(accountID string) (*logrus.Logger, error) {
-	rNotify := serverConfig.GetHTTPNotifyByID(accountID)
+func newWebhookNotify(accountID string) (*logrus.Logger, error) {
+	rNotify := serverConfig.GetWebhookNotifyByID(accountID)
 	fmt.Println(rNotify)
 
 	connection := httpConn{
