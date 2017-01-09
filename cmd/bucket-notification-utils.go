@@ -16,10 +16,7 @@
 
 package cmd
 
-import (
-	"fmt"
-	"strings"
-)
+import "strings"
 
 // List of valid event types.
 var suppportedEventTypes = map[string]struct{}{
@@ -134,12 +131,9 @@ func isValidQueueID(queueARN string) bool {
 	// Unmarshals QueueARN into structured object.
 	sqsARN := unmarshalSqsARN(queueARN)
 	// Is Queue identifier valid?.
-	fmt.Println("Loading ", queueARN)
 	if isHTTPQueue(sqsARN) { // HTTP endpoint.
-		fmt.Println("is HTTP!")
 		httpN := serverConfig.GetHTTPNotifyByID(sqsARN.AccountID)
-		fmt.Println(httpN)
-		return httpN.Enable && httpN.Addr != ""
+		return httpN.Enable && httpN.Endpoint != ""
 	} else if isAMQPQueue(sqsARN) { // AMQP eueue.
 		amqpN := serverConfig.GetAMQPNotifyByID(sqsARN.AccountID)
 		return amqpN.Enable && amqpN.URL != ""
